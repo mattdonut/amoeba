@@ -3,7 +3,7 @@ import { AppState, AppAction } from '../store/app'
 import { connect } from 'react-redux'
 import { EvoTree, getEvoTree } from '../store/evoTree'
 import EvoTreeComponent from './evoTree'
-import { Evo } from '../store/evo'
+import { Evo, evolveAction, updateEvoAction } from '../store/evo'
 
 interface EvoComponentProps {
     evoTree: EvoTree
@@ -21,7 +21,6 @@ const EvoComponent: StatelessComponent<EvoComponentProps> = (props) => (
 
 const mapStateToProps = (state: AppState, props: EvoContainerProps) => {
     const tree = getEvoTree(state.evoStore[props.evoId], state.evoStore)
-    console.log(tree)
     return {
         evoTree: tree
     }
@@ -30,9 +29,11 @@ const mapStateToProps = (state: AppState, props: EvoContainerProps) => {
 const mapDispatchToProps = (dispatch: (action: AppAction) => void, props: EvoContainerProps) => {
     return {
         addChild: (id: number) => {
+            dispatch(evolveAction(id, 'Temp'))
             return null
         },
         updater: (evo: Evo) => {
+            dispatch(updateEvoAction(evo))
             return null
         }
     }

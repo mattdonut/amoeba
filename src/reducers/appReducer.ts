@@ -1,6 +1,6 @@
 // Allowed State
 import { combineReducers } from 'redux'
-import {EvoStoreReducer} from './evo'
+import { EvoStoreReducer } from './evo'
 
 // The root reducer combines reducers from each data domain
 const rootReducer = combineReducers({

@@ -6,7 +6,6 @@ export interface EvoTree {
 }
 
 function getChildren(evo: Evo, store: EvoStore): Evo[] {
-    console.log('Getting children for: ', evo, store)
     return store.allKeys.map((id) => store[id])
             .filter((child) => child.parentId == evo.id)
 }

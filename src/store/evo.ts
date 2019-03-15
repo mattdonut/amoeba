@@ -24,6 +24,12 @@ export interface DeleteEvoAction {
     id: number
 }
 
+export interface EvolveAction {
+    type: 'EVOLVE'
+    parentId: number
+    name: string
+}
+
 // We might be able to relax the payload type to just
 // a partial of the Evo that includes the id
 export interface UpdateEvoAction {
@@ -53,6 +59,14 @@ export function updateEvoAction(evo: Evo): UpdateEvoAction {
     }
 }
 
+export function evolveAction(parentId: number, name: string): EvolveAction {
+    return {
+        type: 'EVOLVE',
+        parentId,
+        name
+    }
+}
+
 export function createEvo(evo: Evo, store: EvoStore): EvoStore {
     const newStore = Object.assign({}, store, {[evo.id]: evo})
     newStore.allKeys.push(evo.id)
@@ -74,10 +88,19 @@ export function updateEvo(evo: Evo, store: EvoStore): EvoStore {
     return newStore
 }
 
+export function evolve(parentId: number, name: string, store: EvoStore): EvoStore {
+    const newEvo = {
+        id: generateNextEvoId(store),
+        name,
+        parentId
+    }
+    return createEvo(newEvo, store)
+}
+
 // Note that a Read operation does not need an action as it
 // is nilpotent
 
-export type EvoStoreAction = CreateEvoAction | DeleteEvoAction | UpdateEvoAction
+export type EvoStoreAction = CreateEvoAction | DeleteEvoAction | UpdateEvoAction | EvolveAction
 
 // Overly simple function to get the next id to assign
 // This will eventually need to be a remote call to the database

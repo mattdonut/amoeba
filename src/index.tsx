@@ -21,6 +21,9 @@ ReactDOM.render(
     <Provider store={store}>
     <Router>
         <div className="page">
+        <header>
+            <Link to={'/evo/0'}>Evolver</Link>
+        </header>
             <main>
                 <Switch>
                     <Route exact path="/" component={App} />
