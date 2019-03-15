@@ -14,7 +14,8 @@ const layoutStyles = {
 }
 
 const spacerStyle = {
-    flex: '1 1 auto'
+    flex: '1 1 auto',
+    "border-right": 'solid black 1px'
 }
 
 const childStyle = {
@@ -26,6 +27,12 @@ function addChildWithName(id: number, adder: (id: number, name: string) => void)
     if (name) {
         adder(id, name)
     }
+}
+
+function enterEditMode(name: string, 
+        setEdit: (state: boolean) => void, setLocal: (name: string) => void) {
+    setLocal(name)
+    setEdit(true)
 }
 
 const EvoTreeComponent: StatelessComponent<EvoTreeComponentProps> = ({ evoTree, updater, addChild }) => {
@@ -58,8 +65,8 @@ const EvoTreeComponent: StatelessComponent<EvoTreeComponentProps> = ({ evoTree, 
 
     let nameFragment = 
         <>
-            <Link to={'/evo/' + evo.id}>{evo.name}</Link>
-            <button onClick={(e) => setEdit(true)}>Edit</button>
+            &nbsp;<Link to={'/evo/' + evo.id}>{evo.name}</Link>&nbsp;
+            <button onClick={(e) => enterEditMode(evo.name, setEdit, updateLocal)}>Edit</button>
         </>
     if (editing) {
         nameFragment = (
