@@ -1,12 +1,12 @@
 // This is a stub api
 
 import { Evo, EvoStore, generateNextEvoId } from './evo'
-import { bool } from 'prop-types';
+
 
 const localString = localStorage.getItem('evoStore')
-let local: EvoStore = {allKeys: []}
+let local: EvoStore = {allKeys: [0], 0: {id: 0, name: 'Amoeba'}}
 if (localString) {
-    let local = JSON.parse(localString)
+    local = JSON.parse(localString)
 }
 
 function store(obj: EvoStore) {
@@ -36,6 +36,7 @@ export function create(parentId: number, name: string): Promise<Evo> {
         name,
         parentId
     }
+    console.log('Creating new Evo: ', newEvo)
     return put(newEvo)
 }
 
@@ -43,4 +44,9 @@ export function del(id: number): Promise<boolean> {
     delete local[id]
     store(local)
     return Promise.resolve(true)
+}
+
+export function clear() {
+    local = {allKeys: []}
+    store(local)
 }

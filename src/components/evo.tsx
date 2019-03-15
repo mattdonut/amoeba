@@ -1,9 +1,9 @@
 import React, { StatelessComponent } from 'react'
-import { AppState, AppAction } from '../store/app'
+import { AppState, AppAction, AppDispatchable } from '../store/app'
 import { connect } from 'react-redux'
 import { EvoTree, getEvoTree } from '../store/evoTree'
 import EvoTreeComponent from './evoTree'
-import { Evo, evolveAction, updateEvoAction, deleteEvoAction } from '../store/evo'
+import { Evo, evolveAction, updateEvoAction, updateEvoThunk, deleteEvoAction, evolveEvoThunk } from '../store/evo'
 import { Redirect } from 'react-router-dom';
 
 interface EvoComponentProps {
@@ -59,13 +59,13 @@ const mapStateToProps = (state: AppState, props: EvoContainerProps) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: (action: AppAction) => void, props: EvoContainerProps) => {
+const mapDispatchToProps = (dispatch: (action: AppDispatchable) => void, props: EvoContainerProps) => {
     return {
         addChild: (id: number, name: string) => {
-            dispatch(evolveAction(id, name))
+            dispatch(evolveEvoThunk(id, name))
         },
         updater: (evo: Evo) => {
-            dispatch(updateEvoAction(evo))
+            dispatch(updateEvoThunk(evo))
         },
         deleter: (evo: Evo) => {
             dispatch(deleteEvoAction(evo))

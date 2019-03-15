@@ -1,10 +1,12 @@
-import { EvoStore, createEvo, deleteEvo, updateEvo, evolve } from '../store/evo'
+import { EvoStore, createEvo, deleteEvo, updateEvo, evolve, setStore } from '../store/evo'
 import { AppAction } from '../store/app'
 
 // Allowed State
 
 export function EvoStoreReducer(store: EvoStore = blankEvoStore(), action: AppAction): EvoStore {
     switch (action.type) {
+        case 'SET_STORE':
+            return setStore(action.store)
         case 'CREATE_EVO':
             return createEvo(action.evo, store)
         case 'DELETE_EVO':

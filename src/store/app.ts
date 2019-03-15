@@ -1,7 +1,9 @@
-import { EvoStore, EvoStoreAction } from './evo'
+import { EvoStore, EvoStoreAction, EvoDispatchable } from './evo'
 
 // The union of all actions possible in our data store
 export type AppAction = EvoStoreAction
+
+export type AppDispatchable = EvoDispatchable
 
 // The combined description of our app's data store
 export interface AppState {

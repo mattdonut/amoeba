@@ -2,6 +2,10 @@
 
 // It also defines actions to be used to drive CRUD in a redux
 // style store.
+import { create, put } from './api'
+import { AppDispatch, AppState, AppAction } from './app'
+import { ThunkAction, ThunkDispatch } from 'redux-thunk'
+import { Dispatch, Action } from 'redux'
 
 export interface Evo {
     id: number
@@ -28,6 +32,11 @@ export interface EvolveAction {
     type: 'EVOLVE'
     parentId: number
     name: string
+}
+
+export interface SetStoreAction {
+    type: 'SET_STORE'
+    store: EvoStore
 }
 
 // We might be able to relax the payload type to just
@@ -67,6 +76,13 @@ export function evolveAction(parentId: number, name: string): EvolveAction {
     }
 }
 
+export function setStoreAction(store: EvoStore): SetStoreAction {
+    return {
+        type: 'SET_STORE',
+        store
+    }
+}
+
 export function createEvo(evo: Evo, store: EvoStore): EvoStore {
     const newStore = Object.assign({}, store, {[evo.id]: evo})
     newStore.allKeys.push(evo.id)
@@ -97,14 +113,52 @@ export function evolve(parentId: number, name: string, store: EvoStore): EvoStor
     return createEvo(newEvo, store)
 }
 
+export function setStore(newStore: EvoStore): EvoStore {
+    return Object.assign({}, newStore)
+}
+
 // Note that a Read operation does not need an action as it
 // is nilpotent
 
-export type EvoStoreAction = CreateEvoAction | DeleteEvoAction | UpdateEvoAction | EvolveAction
-
+export type EvoStoreActionBase = CreateEvoAction | DeleteEvoAction | UpdateEvoAction | EvolveAction | SetStoreAction
+type EvoThunkAction = ThunkAction<Promise<EvoStoreActionBase>, AppState, void, Action<EvoStoreActionBase>>
+export type EvoStoreAction = EvoStoreActionBase
+export type EvoDispatchable = EvoStoreActionBase | EvoThunkAction
 // Overly simple function to get the next id to assign
 // This will eventually need to be a remote call to the database
 export function generateNextEvoId(store: EvoStore): number {
     return store.allKeys[store.allKeys.length - 1] + 1
 }
 
+
+export function evolveEvoThunk(parentId: number, name: string): EvoThunkAction {
+    return async function (dispatch: Dispatch) {
+        try {
+            const newEvo = await create(parentId, name)
+            return dispatch(createEvoAction(newEvo))
+        }
+        catch (e) {
+            // Nothing
+        }
+        return createEvoAction({id: -1, name: 'Error'})
+    }
+}
+
+
+export function updateEvoThunk(evo: Evo): EvoThunkAction {
+    return async function (dispatch: Dispatch, getState: () => any) {
+        const prevEvo = getState().evoStore[evo.id]
+        // optimistic update
+        let act = dispatch(updateEvoAction(evo))
+        try {
+            // persist
+            await put(evo)
+        }
+        catch (e) {
+            // rollback
+            console.warn('Update failed!', e)
+            act = dispatch(updateEvoAction(prevEvo))
+        }
+        return act
+    }
+}
