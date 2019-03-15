@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import RoutedEvo from './components/routedEvo'
@@ -28,6 +28,7 @@ ReactDOM.render(
                 <Switch>
                     <Route exact path="/" component={App} />
                     <Route path="/evo/:id" component={RoutedEvo} />
+                    <Redirect to='/evo/0'></Redirect>
                 </Switch>
             </main>
         </div>

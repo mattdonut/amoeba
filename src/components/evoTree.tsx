@@ -5,8 +5,8 @@ import { EvoTree } from '../store/evoTree'
 
 interface EvoTreeComponentProps {
     evoTree: EvoTree
-    updater: (evo: Evo) => null
-    addChild: (id: number) => null
+    updater: (evo: Evo) => void
+    addChild: (id: number, name: string) => void
 }
 
 const layoutStyles = {
@@ -19,6 +19,13 @@ const spacerStyle = {
 
 const childStyle = {
     flex: '10 1 auto'
+}
+
+function addChildWithName(id: number, adder: (id: number, name: string) => void) {
+    const name = prompt('Name your evolution!')
+    if (name) {
+        adder(id, name)
+    }
 }
 
 const EvoTreeComponent: StatelessComponent<EvoTreeComponentProps> = ({ evoTree, updater, addChild }) => {
@@ -67,7 +74,7 @@ const EvoTreeComponent: StatelessComponent<EvoTreeComponentProps> = ({ evoTree, 
         <div>
             <h3>
                 {nameFragment}
-                <button onClick={(e) => addChild(evo.id)}>Evolve</button>
+                <button onClick={(e) => addChildWithName(evo.id, addChild)}>Evolve</button>
             </h3>
             
             {childrenFragment}

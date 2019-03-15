@@ -3,38 +3,72 @@ import { AppState, AppAction } from '../store/app'
 import { connect } from 'react-redux'
 import { EvoTree, getEvoTree } from '../store/evoTree'
 import EvoTreeComponent from './evoTree'
-import { Evo, evolveAction, updateEvoAction } from '../store/evo'
+import { Evo, evolveAction, updateEvoAction, deleteEvoAction } from '../store/evo'
+import { Redirect } from 'react-router-dom';
 
 interface EvoComponentProps {
-    evoTree: EvoTree
-    updater: (evo: Evo) => null
-    addChild: (id: number) => null
+    evoTree: EvoTree | null
+    updater: (evo: Evo) => void
+    addChild: (id: number, name: string) => void
+    deleter: (evo: Evo) => void
 }
 
 interface EvoContainerProps {
     evoId: number
 }
 
-const EvoComponent: StatelessComponent<EvoComponentProps> = (props) => (
-    <EvoTreeComponent {...props}></EvoTreeComponent>
-)
+const EvoComponent: StatelessComponent<EvoComponentProps> = ({evoTree, updater, addChild, deleter}) => {
+    if (evoTree != null) {
+        console.log(evoTree.evo)
+        const evo = evoTree.evo
+        if (evo.parentId != null) {
+            return (
+                <>
+                    <button onClick={(e) => deleter(evo)}>Delete</button>
+                    <EvoTreeComponent 
+                        evoTree={evoTree}
+                        updater={updater}
+                        addChild={addChild}>
+                    </EvoTreeComponent>
+                </>
+            )
+        }
+        return (
+            <EvoTreeComponent 
+                        evoTree={evoTree}
+                        updater={updater}
+                        addChild={addChild}>
+                    </EvoTreeComponent>
+        )
+    }
+    // If there is no tree for this id, redirect to the root
+    return <Redirect to='/evo/0'></Redirect>
+}
+
 
 const mapStateToProps = (state: AppState, props: EvoContainerProps) => {
-    const tree = getEvoTree(state.evoStore[props.evoId], state.evoStore)
+    const evo = state.evoStore[props.evoId]
+    if (evo) {
+        const tree = getEvoTree(state.evoStore[props.evoId], state.evoStore)
+        return {
+            evoTree: tree
+        }
+    }
     return {
-        evoTree: tree
+        evoTree: null
     }
 }
 
 const mapDispatchToProps = (dispatch: (action: AppAction) => void, props: EvoContainerProps) => {
     return {
-        addChild: (id: number) => {
-            dispatch(evolveAction(id, 'Temp'))
-            return null
+        addChild: (id: number, name: string) => {
+            dispatch(evolveAction(id, name))
         },
         updater: (evo: Evo) => {
             dispatch(updateEvoAction(evo))
-            return null
+        },
+        deleter: (evo: Evo) => {
+            dispatch(deleteEvoAction(evo))
         }
     }
 }
