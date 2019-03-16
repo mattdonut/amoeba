@@ -9,6 +9,7 @@ interface EvoTreeComponentProps {
     addChild: (id: number, name: string) => void
 }
 
+// Some CSS
 const layoutStyles = {
     display: 'flex'
 }
@@ -22,6 +23,7 @@ const childStyle = {
     flex: '10 1 auto'
 }
 
+// Helper action functions
 function addChildWithName(id: number, adder: (id: number, name: string) => void) {
     const name = prompt('Name your evolution!')
     if (name) {
@@ -35,6 +37,7 @@ function enterEditMode(name: string,
     setEdit(true)
 }
 
+// EvoTreeComponent is our main component for displaying the evolution tree
 const EvoTreeComponent: StatelessComponent<EvoTreeComponentProps> = ({ evoTree, updater, addChild }) => {
     const evo = evoTree.evo
     const [editing, setEdit] = useState(false)
@@ -58,8 +61,6 @@ const EvoTreeComponent: StatelessComponent<EvoTreeComponentProps> = ({ evoTree, 
     }
 
     const saveLocal = () => {
-        console.log('Using updater!', evo, localName);
-        
         updater(Object.assign({}, evo, {name: localName}))
     }
 

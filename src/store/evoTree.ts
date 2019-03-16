@@ -10,6 +10,7 @@ function getChildren(evo: Evo, store: EvoStore): Evo[] {
             .filter((child) => child.parentId == evo.id)
 }
 
+// utility function to fetch a full tree of Evos from a given store
 export function getEvoTree(evo: Evo, store: EvoStore): EvoTree {
     const children = getChildren(evo, store)
     const childTrees = children.map((child) => getEvoTree(child, store))

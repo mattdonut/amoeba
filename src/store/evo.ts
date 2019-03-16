@@ -3,8 +3,8 @@
 // It also defines actions to be used to drive CRUD in a redux
 // style store.
 import { create, put } from './api'
-import { AppDispatch, AppState, AppAction } from './app'
-import { ThunkAction, ThunkDispatch } from 'redux-thunk'
+import { AppState } from './app'
+import { ThunkAction } from 'redux-thunk'
 import { Dispatch, Action } from 'redux'
 
 export interface Evo {
@@ -120,27 +120,34 @@ export function setStore(newStore: EvoStore): EvoStore {
 // Note that a Read operation does not need an action as it
 // is nilpotent
 
+
 export type EvoStoreActionBase = CreateEvoAction | DeleteEvoAction | UpdateEvoAction | EvolveAction | SetStoreAction
 type EvoThunkAction = ThunkAction<Promise<EvoStoreActionBase>, AppState, void, Action<EvoStoreActionBase>>
+
+// We export two action super types, one for the reducers, and one for the
+// dispatch method. This is to address the issue of the Thunk dispatcher
+// accepting a broader set of actions than the reducers.
 export type EvoStoreAction = EvoStoreActionBase
 export type EvoDispatchable = EvoStoreActionBase | EvoThunkAction
+
 // Overly simple function to get the next id to assign
 // This will eventually need to be a remote call to the database
 export function generateNextEvoId(store: EvoStore): number {
     return store.allKeys[store.allKeys.length - 1] + 1
 }
 
-
+// Thunks for working with networking
 export function evolveEvoThunk(parentId: number, name: string): EvoThunkAction {
     return async function (dispatch: Dispatch) {
         try {
+            // Creation is not currently optimistic
             const newEvo = await create(parentId, name)
             return dispatch(createEvoAction(newEvo))
         }
         catch (e) {
-            // Nothing
+            // Nothing yet, should set messaging
+            return createEvoAction({id: -1, name: 'Error'})
         }
-        return createEvoAction({id: -1, name: 'Error'})
     }
 }
 

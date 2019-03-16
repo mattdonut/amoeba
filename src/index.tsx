@@ -4,8 +4,6 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk'
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-import './index.css';
-import App from './App';
 import RoutedEvo from './components/routedEvo'
 import { list } from './store/api'
 import { EvoStore, setStoreAction } from './store/evo'
@@ -24,6 +22,7 @@ const createStoreWithMiddleware = applyMiddleware(
 // Make the local app state
 const store = createStoreWithMiddleware(reducer, initState);
 
+// Fetch the stored app state from the api
 list().then((evos) => {
     const allKeys = evos.map((evo) => evo.id)
     const newStore: EvoStore = {allKeys}
@@ -42,7 +41,6 @@ ReactDOM.render(
         </header>
             <main>
                 <Switch>
-                    <Route exact path="/" component={App} />
                     <Route path="/evo/:id" component={RoutedEvo} />
                     <Redirect to='/evo/0'></Redirect>
                 </Switch>

@@ -18,3 +18,9 @@ This should start up the development server running on localhost and bring it up
 - Tree zoom links
 - Click the Evolve link to in the top left to return to the root Amoeba
 - Persistance through api simulation using localStorage
+
+## Next Steps:
+- Add automated testing
+- Stand up a REST API for the nodes instead of using localStorage
+- Add messaging for api failure cases
+- Clean up styles (Font, link styles, buttons, etc)
